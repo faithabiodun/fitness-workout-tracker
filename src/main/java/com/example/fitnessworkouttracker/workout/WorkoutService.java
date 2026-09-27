@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// I'm putting all my workout business logic here so my controller stays thin
 @Service
 public class WorkoutService {
 
@@ -29,6 +30,7 @@ public class WorkoutService {
         this.userRepository = userRepository;
     }
 
+    // I'm creating a workout: I load my user, default missing status to COMPLETED, then attach each exercise line
     @Transactional
     public WorkoutResponse createWorkout(Long userId, WorkoutRequest request) {
         AppUser user = userRepository.findById(userId)
@@ -48,6 +50,7 @@ public class WorkoutService {
         return toResponse(workoutRepository.save(workout));
     }
 
+    // I'm listing one user's workouts newest first and converting each to what I send the frontend
     @Transactional(readOnly = true)
     public List<WorkoutResponse> listWorkouts(Long userId) {
         return workoutRepository.findByUserIdOrderByPerformedDateDesc(userId).stream()
@@ -55,11 +58,13 @@ public class WorkoutService {
                 .toList();
     }
 
+    // I'm getting one workout but only if it belongs to this user
     @Transactional(readOnly = true)
     public WorkoutResponse getWorkout(Long userId, Long workoutId) {
         return toResponse(findOwned(userId, workoutId));
     }
 
+    // I'm updating just my status field (planned / completed / skipped)
     @Transactional
     public WorkoutResponse updateStatus(Long userId, Long workoutId, WorkoutStatus status) {
         Workout workout = findOwned(userId, workoutId);
@@ -67,17 +72,20 @@ public class WorkoutService {
         return toResponse(workoutRepository.save(workout));
     }
 
+    // I'm deleting a workout, my cascade + orphanRemoval removes its exercise lines too
     @Transactional
     public void deleteWorkout(Long userId, Long workoutId) {
         workoutRepository.delete(findOwned(userId, workoutId));
     }
 
+    // I'm reusing this check so every get/update/delete only touches the owner's own workout
     private Workout findOwned(Long userId, Long workoutId) {
         return workoutRepository.findByIdAndUserId(workoutId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Workout not found: " + workoutId));
     }
 
+    // I'm converting my entity into what I send back so I never expose my AppUser directly
     private WorkoutResponse toResponse(Workout workout) {
         List<WorkoutExerciseResponse> items = workout.getExercises().stream()
                 .map(e -> new WorkoutExerciseResponse(

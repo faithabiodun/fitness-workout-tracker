@@ -15,14 +15,17 @@ import jakarta.persistence.Table;
 @Table(name = "workout_exercises")
 public class WorkoutExercise {
 
+    // I'm using this as my auto-generated primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // I'm linking back to my parent workout (many rows belong to one workout)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "workout_id", nullable = false)
     private Workout workout;
 
+    // I'm linking to the exercise definition, I'm using EAGER so I always have its name ready
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "exercise_id", nullable = false)
     private Exercise exercise;
@@ -33,8 +36,10 @@ public class WorkoutExercise {
     @Column(nullable = false)
     private int reps;
 
+    // I'm keeping weight optional so I can log bodyweight moves without a weight
     private Double weightKg;
 
+    // I'm keeping this no-args constructor for JPA, that's the only reason it's here
     protected WorkoutExercise() {
     }
 

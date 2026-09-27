@@ -1,11 +1,6 @@
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
-# secrets / local env
-.env
-*.env
-.env.*
-!.env.example
 !**/src/main/**/target/
 !**/src/test/**/target/
 

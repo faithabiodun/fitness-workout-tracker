@@ -15,26 +15,27 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 public class JwtConfig {
+    // I'm wiring my JWT signing setup here so my encoder and decoder share one secret
     @Bean
     public SecretKey secretKey(
 
             @Value("${app.jwt.secret}") String secret
-    ) { return new SecretKeySpec(
+    ) { return new SecretKeySpec( // I'm turning my config string into an HMAC-SHA256 key
             secret.getBytes(),
             "HmacSHA256"
     );
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(SecretKey key) {
+    public JwtEncoder jwtEncoder(SecretKey key) { // I'm signing my tokens here with the same secret
         return NimbusJwtEncoder
                 .withSecretKey(key)
-                .algorithm(MacAlgorithm.HS256)
+                .algorithm(MacAlgorithm.HS256) // I learned HS256 must match on both sides or my token fails
                 .build();
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(
+    public JwtDecoder jwtDecoder( // I'm verifying incoming tokens with that same secret
             SecretKey key,
             @Value("${app.jwt.issuer}") String issuer
     ) {
@@ -43,7 +44,7 @@ public class JwtConfig {
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
 
-        decoder.setJwtValidator(
+        decoder.setJwtValidator( // I learned this checks my issuer so foreign tokens are rejected
                 JwtValidators.createDefaultWithIssuer(issuer)
         );
 

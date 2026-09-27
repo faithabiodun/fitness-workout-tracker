@@ -1,0 +1,9 @@
+{
+  "id": "fitness-workout-tracker-local",
+  "name": "local",
+  "values": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "enabled": true },
+    { "key": "authToken", "value": "PASTE_JWT_HERE", "enabled": true },
+    { "key": "workoutId", "value": "1", "enabled": true }
+  ]
+}

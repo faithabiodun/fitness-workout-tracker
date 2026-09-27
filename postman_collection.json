@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "fitness-workout-tracker",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "authToken", "value": "PASTE_JWT_HERE" },
+    { "key": "workoutId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "1 - Signup",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/signup",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2 - Login",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/login",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3 - List Exercises (public)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/exercises" }
+    },
+    {
+      "name": "4 - Get Exercise by id (public)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/exercises/1" }
+    },
+    {
+      "name": "5 - Create Workout (auth)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/workouts",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"performedDate\": \"2026-09-27\",\n  \"status\": \"COMPLETED\",\n  \"notes\": \"Morning push day\",\n  \"exercises\": [\n    { \"exerciseId\": 1, \"sets\": 3, \"reps\": 12, \"weightKg\": 0 },\n    { \"exerciseId\": 4, \"sets\": 4, \"reps\": 8, \"weightKg\": 60 }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "6 - List My Workouts (auth)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/workouts",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+      }
+    },
+    {
+      "name": "7 - Get Workout by id (auth)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/workouts/{{workoutId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+      }
+    },
+    {
+      "name": "8 - Update Workout Status (auth)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/workouts/{{workoutId}}/status?status=SKIPPED",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+      }
+    },
+    {
+      "name": "9 - Progress Report (auth)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/reports/progress",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+      }
+    },
+    {
+      "name": "10 - Delete Workout (auth)",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/workouts/{{workoutId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+      }
+    }
+  ]
+}

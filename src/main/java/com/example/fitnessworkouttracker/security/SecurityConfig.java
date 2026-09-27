@@ -11,10 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-
+    // I'm defining my whole security filter chain here
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // I'm hashing my passwords with BCrypt so I never store plain text
     }
 
     @Bean
@@ -23,11 +23,11 @@ public class SecurityConfig {
     ) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // I'm disabling CSRF because my stateless JWT API has no cookies
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
+                                SessionCreationPolicy.STATELESS // I learned STATELESS means no session, every request needs my JWT
                         )
                 )
 
@@ -39,13 +39,13 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
-                        ).permitAll()
+                        ).permitAll() // I learned permitAll means public, no token needed here
 
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // I'm requiring my JWT for everything else like workouts and reports
                 )
 
                 .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(Customizer.withDefaults())
+                        oauth2.jwt(Customizer.withDefaults()) // I'm validating my JWTs with my JwtDecoder bean
                 );
 
         return http.build();

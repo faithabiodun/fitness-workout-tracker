@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// I'm exposing my /api/workouts endpoints here, all of them need a logged-in user
 @RestController
 @RequestMapping("/api/workouts")
 public class WorkoutController {
@@ -29,10 +30,12 @@ public class WorkoutController {
     }
 
     // JWT subject is the user id (see AuthService.createToken)
+    // I'm reading my user id from the JWT via Authentication.getName() so I always scope to the caller
     private Long userId(Authentication auth) {
         return Long.parseLong(auth.getName());
     }
 
+    // I'm creating a workout from what the frontend sends me
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public WorkoutResponse create(@Valid @RequestBody WorkoutRequest request,
@@ -40,16 +43,19 @@ public class WorkoutController {
         return workoutService.createWorkout(userId(auth), request);
     }
 
+    // I'm listing the caller's own workouts
     @GetMapping
     public List<WorkoutResponse> list(Authentication auth) {
         return workoutService.listWorkouts(userId(auth));
     }
 
+    // I'm getting one of my own workouts by id
     @GetMapping("/{id}")
     public WorkoutResponse getOne(@PathVariable Long id, Authentication auth) {
         return workoutService.getWorkout(userId(auth), id);
     }
 
+    // I'm patching just the status of one of my workouts
     @PatchMapping("/{id}/status")
     public WorkoutResponse updateStatus(@PathVariable Long id,
                                         @RequestParam WorkoutStatus status,
@@ -57,6 +63,7 @@ public class WorkoutController {
         return workoutService.updateStatus(userId(auth), id, status);
     }
 
+    // I'm deleting one of my own workouts
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, Authentication auth) {

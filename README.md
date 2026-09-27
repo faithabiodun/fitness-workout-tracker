@@ -1,1 +1,1 @@
-A REST API for managing workouts, exercises, schedules and workout sessions. Built with Java, SpringBoot and PostgreSQL.
+A REST 2API for managing workouts, exercises, schedules and workout sessions. Built with Java, SpringBoot and PostgreSQL.
